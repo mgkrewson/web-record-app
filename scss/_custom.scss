@@ -1,0 +1,187 @@
+body {
+  //margin: 0 !important;
+}
+
+#page-y-grid {
+  position: absolute;
+  height: 99vh;
+  min-height: 700px;
+  width: 100vw;
+  z-index: 100;
+}
+
+.cell {
+  //border: 1px dashed black;
+}
+
+.full-height {
+  //border: 1px solid black;
+  height: 100% !important;
+}
+
+.grid-y>.cell {
+  //width: 100%;
+}
+
+// url('https://images.unsplash.com/photo-1453738773917-9c3eff1db985')
+// https://images.unsplash.com/photo-1495137215671-61b3f15aedb0?w=1050&q=80
+.header {
+  position: relative;
+  background-image: url('https://images.unsplash.com/photo-1473646590311-c48e1bc77b44?w=1350&q=80');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-origin: border-box;
+  background-size: cover;
+  color: $white !important;
+}
+
+$bg-mask-color: rgba(0,0,0,0.3);
+
+
+
+.full-bg-image {
+  background: linear-gradient( $bg-mask-color, $bg-mask-color), url('https://images.unsplash.com/photo-1435777940218-be0b632d06db?w=1050&q=80'); // background-image: url('https://images.unsplash.com/photo-1495137215671-61b3f15aedb0?w=1050&q=80');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-origin: border-box;
+  background-size: cover;
+  background-attachment: fixed;
+  color: white !important;
+}
+
+.heavy-text {
+  font-weight: bold !important;
+}
+
+.body {
+  position: relative;
+}
+
+#title {
+  font-size: 5rem !important;
+  &>div>h1 {
+    font-size: 5rem !important;
+    font-weight: 700 !important;
+  }
+}
+
+#contact {
+  position: absolute;
+  right: 2rem;
+  top: 0.5rem;
+}
+
+#about {
+  // height: max-content;
+}
+
+#close-button {
+  position: absolute;
+  right: 3.5rem;
+  top: 1rem;
+}
+
+p {
+  padding-top: 0.3rem !important;
+}
+
+#left-pane {
+  border-right: 1px solid #333333;
+  height: 100%;
+}
+
+.footer>div {
+  padding-top: 30px;
+}
+
+#record {
+  cursor: pointer;
+}
+
+.alert-color {
+  color: $alert-color !important;
+}
+
+.primary-color {
+  color: $primary-color !important;
+}
+
+.success-color {
+  color: $success-color !important;
+}
+
+form {
+  text-transform: uppercase;
+}
+
+.form-field {
+  padding-left: 20px;
+}
+
+.max-content {
+  height: max-content;
+}
+
+.full-width {
+  width: 100% !important;
+}
+
+#timer {
+  font-size: 4.2rem !important;
+}
+
+#home-play {
+  margin-top: -5px;
+}
+
+input {
+  border: none !important;
+  border-bottom: 1px solid $dark-gray !important;
+  box-shadow: none !important;
+  padding: .1rem .5rem !important;
+  height: 1.5rem !important;
+  &:focus {
+    border-color: $primary-color !important;
+    background-color: rgba($primary-color, 0.3) !important;
+    // box-shadow: inset 0px -3px 5px -3px $alert-color !important;
+  }
+}
+
+#upload-pic {
+  height: 2.5rem;
+  line-height: 2.3rem;
+  padding: 0.1rem 0.8rem;
+  margin: 0;
+}
+
+.thumb {
+  height: 100px;
+  width: auto;
+}
+
+input[type=file] {
+  border: none !important;
+  padding: 0 !important;
+}
+
+#upload-btn {
+  font-size: 2.5rem;
+  padding: 1rem;
+}
+
+.reset-disabled {
+  color: $light-gray !important;
+  cursor: default !important;
+}
+
+#reset {
+  cursor: pointer;
+}
+
+#thanks {
+  font-size: 5rem;
+}
+
+.thanks-text {
+  padding-top: 20px;
+}

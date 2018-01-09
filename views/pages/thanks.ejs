@@ -1,0 +1,75 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<% include ../partials/head.ejs %>
+<body>
+
+    <div class="grid-y" id="page-y-grid">
+        <% include ../partials/header %>
+
+            <div class="cell small-4 body">
+
+                <% include ../partials/close-button %>
+
+                <div class="grid-x grid-margin-x align-center-middle full-height">
+                    <div class="cell small-12 text-center">
+                        <h1 id="thanks">Thanks!</h1>
+                    </div>
+                    <div class="cell small-12 text-center">
+                        <h3>We have emailed you your recording link.</h3>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="cell small-3">
+                <div class="grid-x align-center-middle full-height">
+
+                    <div class="cell small-12 medium-4">
+                        <div class="grid-x align-center-middle full-width" id="left-pane">
+                            <div class="cell small-12 text-center">
+                                <div class="grid-x align-center">
+                                    <div class="cell small-3 text-center">
+                                        <i class="fa fa-share-alt fa-3x" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="cell small-3 text-center">
+                                        <i class="fa fa-play fa-3x" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cell small-12 text-center">
+                                <h5 class="thanks-text">Your Recording</h5>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="cell small-12 medium-4">
+                        <div class="grid-x align-center-middle full-width" id="right-pane">
+                            <div class="cell small-12 text-center">
+                                <div class="grid-x align-center">
+                                    <div class="cell small-3 text-center">
+                                        <i class="fa fa-arrow-up fa-3x" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="cell small-3 text-center">
+                                        <i class="fa fa-play fa-3x" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cell small-12 text-center">
+                                <h5 class="thanks-text">Listen</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+
+    <% include ../partials/google-scripts.ejs %>
+        <% include ../partials/scripts.ejs %>
+            </body>
+
+</html>
