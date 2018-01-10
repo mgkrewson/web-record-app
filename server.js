@@ -1,3 +1,5 @@
+// import { content } from "googleapis/apis";
+
 // import { error } from "util";
 
 var Promise = require("bluebird");
@@ -53,31 +55,112 @@ app.use(function (err, req, res, next) {
 
 
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.render('pages/index', {
         title: '',
     });
 });
 
-app.get('/record', function(req, res) {
+app.get('/record', function (req, res) {
     res.render('pages/record', {
         title: ' - RECORD',
     });
 });
 
-app.get('/thanks', function(req, res) {
+app.get('/thanks', function (req, res) {
     res.render('pages/thanks', {
         title: ' - THANKS',
     });
 });
 
-app.get('/play', function(req, res) {
-    res.render('pages/play', {
-        title: ' - PLAY',
-    });
+app.get('/play', function (req, res) {
+    if (!req.query.id) {
+        getRandomID()
+            .then((randomID) => {
+                console.log({
+                    randomID
+                });
+                res.redirect('/play?id=' + randomID);
+            })
+            .catch((err) => {
+                console.error
+            });
+    } else {
+        let requestedID = req.query.id.toString();
+        console.log({
+            requestedID
+        });
+        let row;
+        let context = {};
+
+        //get spreadsheet data for id
+        fs.readFileAsync('client_secret.json')
+            .then(content => {
+                return returnClient(content)
+            })
+            .then((authClient) => {
+                return accessSheets(authClient, 'A2:A');
+            })
+            .then((response) => {
+                row = response.values.map((val) => val.toString()).indexOf(requestedID) + 2;
+                console.log({
+                    row
+                });
+                return fs.readFileAsync('client_secret.json')
+            })
+            .then(content => {
+                return returnClient(content)
+            })
+            .then((authClient) => {
+                return accessSheets(authClient, 'A' + row + ':H' + row);
+            })
+            .then((response) => {
+                context = {
+                    'title': ' - PLAY',
+                    'audioTitle': response.values[0][0],
+                    'age': response.values[0][2],
+                    'gender': response.values[0][3],
+                    'location': response.values[0][4],
+                    'audio_url': response.values[0][6],
+                    'picUrl': response.values[0][7],
+                };
+                console.log(context);
+                res.render('pages/play', context);
+            });
+
+
+        //use urls on spreadsheet to query GCS storage
+
+
+    }
 });
 
-var fileFields = upload.fields([{ name: 'audio_file', maxCount: 1}, {name: 'pic', maxCount: 1}]);
+function getRandomID() {
+    return fs.readFileAsync('client_secret.json')
+        .then(content => {
+            return returnClient(content)
+        })
+        .catch((error) => console.error)
+        .then((authClient) => {
+            return accessSheets(authClient, 'A2:A');
+        })
+        .then((response) => {
+            let length = response.values.length;
+            let randInd = Math.floor(Math.random() * length);
+            return response.values[randInd];
+        })
+        .catch((err) => {
+            console.error;
+        })
+}
+
+var fileFields = upload.fields([{
+    name: 'audio_file',
+    maxCount: 1
+}, {
+    name: 'pic',
+    maxCount: 1
+}]);
 app.post('/process_post', fileFields, function (req, res, next) {
     console.log("POST request received");
     // perform some data validation
@@ -88,7 +171,7 @@ app.post('/process_post', fileFields, function (req, res, next) {
     // save data to state
     var date = new Date();
     state.currentForm = req.body;
-    state.currentForm.date = (date.getMonth()+1) + '/' + date.getDate() + '/' + date.getFullYear();
+    state.currentForm.date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
     console.log("current state: " + JSON.stringify(state.currentForm));
 
     fs.readFileAsync('client_secret.json')
@@ -97,7 +180,7 @@ app.post('/process_post', fileFields, function (req, res, next) {
         })
         .catch((error) => console.error)
         .then((authClient) => {
-            return accessSheets(authClient);
+            return accessSheets(authClient, 'A2:A');
         })
         .then((response) => {
             return getID(response);
@@ -115,9 +198,9 @@ app.post('/process_post', fileFields, function (req, res, next) {
         .catch((err) => {
             console.error(err);
         });
-        
 
-    res.redirect('/record');
+    res.end();
+
 });
 
 function returnClient(content) {
@@ -136,12 +219,12 @@ function returnClient(content) {
     return oauth2Client;
 }
 
-function accessSheets(authClient) {
+function accessSheets(authClient, range) {
     console.log("accessSheets called");
 
     var request = {
         spreadsheetId: '13qJXcfrmwcfP8bzlHQxAkJo0_2QdvuG9X1bCfwvvMO8',
-        range: 'A2:A',
+        range: range,
         auth: authClient
     };
 
@@ -232,7 +315,7 @@ function uploadFile(id, audioFile, picFile, picType, picExt) {
     };
 
     // Uploads a local file to the bucket
-    bucket
+    return bucket
         .upload(audioFile, audioOptions)
         .then((file) => {
             console.log("audio upload successful; file location: " + JSON.stringify(file[0].metadata));
@@ -256,8 +339,6 @@ function uploadFile(id, audioFile, picFile, picType, picExt) {
         .catch(err => {
             console.error('ERROR:', err);
         });
-        
-    return state.currentForm.audio_url;
     // [END storage_upload_file]
 }
 

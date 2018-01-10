@@ -2,12 +2,28 @@ $(document).foundation();
 
 
 /**
+ * For PLAY page
+ */
+
+$("#back").on('click', () => {window.history.back()});
+
+
+
+
+/**
  * Initialize mediaRecorder
  */
 var chunks = [];
 let blobFile;
 let recording = false;
 let playAvailable = false;
+
+let buttonstate = {
+    play: 'fa fa-3x fa-play primary-color',
+    record: 'fa fa-3x fa-microphone success-color',
+    stop: 'fa fa-3x fa-stop alert-color',
+    pause: 'fa fa-3x fa-pause primary-color',
+}
 
 navigator.mediaDevices.getUserMedia({
         audio: true,
@@ -172,6 +188,9 @@ $("#upload-btn").on('click', function (e) {
         type: 'POST',
         contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
         processData: false, // NEEDED, DON'T OMIT THIS
+    })
+    .done((data) => {
+        window.location.href = "/thanks";
     });
 });
 

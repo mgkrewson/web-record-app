@@ -154,6 +154,13 @@ input {
   margin: 0;
 }
 
+
+
+svg {
+  margin: -10px -10px 0 -10px;
+  border-bottom: 1px solid $light-gray;
+}
+
 .thumb {
   height: 100px;
   width: auto;
@@ -184,4 +191,8 @@ input[type=file] {
 
 .thanks-text {
   padding-top: 20px;
+}
+
+#back {
+  cursor: pointer;
 }
