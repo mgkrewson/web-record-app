@@ -5,7 +5,61 @@ $(document).foundation();
  * For PLAY page
  */
 
-$("#back").on('click', () => {window.history.back()});
+$("#back").on('click', () => {
+    window.history.back()
+});
+$("#play").on('click', () => {
+    document.getElementById('player').play();
+});
+
+
+
+$(document).ready(() => {
+    if (window.location.href.indexOf("/play") > 0) {
+        console.log('play page');
+        let id = window.location.href.slice(window.location.href.indexOf("=") + 1);
+
+        $.post("/play_post", {
+            id: id
+        }, function (data) {
+            let context = JSON.parse(data);
+            console.log(context);
+            let maskColor = "rgba(0,0,0,0.3)";
+            let css = {
+                "background": "linear-gradient( " + maskColor + "," + maskColor + "), url(' " + context.pic_url + " ')",
+                "background-repeat": "no-repeat",
+                "background-position": "center center",
+                "background-origin": "border-box",
+                "background-size": "cover",
+                "background-attachment": "fixed",
+            };
+
+            $('.full-bg-image').css(css);
+            $('#player').attr('src', context.audio_url);
+            $('#age').text(context.age);
+            $('#gender').text(context.gender);
+            $('#location').text(context.location);
+        });
+
+        $("#next").on('click', () => {
+            let run = true;
+            let newID;
+            do {
+                $.post("/random", (newID) => {
+                    console.log({newID, id});
+                    console.log(newID != id);
+                    if (newID != id) {
+                        console.log("successful if statement");
+                        run = false;
+                        window.location.href = "/play?id=" + newID;
+                    }
+                });
+            }
+            while (newID == id)
+        });
+    }
+});
+
 
 
 
@@ -61,7 +115,7 @@ navigator.mediaDevices.getUserMedia({
             } else if (playAvailable) {
                 document.getElementById('player').play();
             }
-            
+
         });
 
         function startRecording() {
@@ -69,9 +123,9 @@ navigator.mediaDevices.getUserMedia({
             console.log(mediaRecorder.state);
             console.log("recorder started");
             $('#record').removeClass('success-color').addClass('alert-color').
-                removeClass('fa-microphone').addClass('fa-stop');
+            removeClass('fa-microphone').addClass('fa-stop');
         }
-        
+
         function stopRecording() {
             mediaRecorder.stop();
             console.log(mediaRecorder.state);
@@ -157,8 +211,8 @@ function checkForCompletion() {
     if ($('#pic').prop('files').length < 1) {
         complete = false;
     }
-    
-    console.log("blob: "+ blobFile);
+
+    console.log("blob: " + blobFile);
     if (!blobFile) {
         complete = false;
     }
@@ -183,14 +237,13 @@ $("#upload-btn").on('click', function (e) {
     console.log(formData);
 
     $.ajax({
-        url: '/process_post',
-        data: formData,
-        type: 'POST',
-        contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-        processData: false, // NEEDED, DON'T OMIT THIS
-    })
-    .done((data) => {
-        window.location.href = "/thanks";
-    });
+            url: '/record_post',
+            data: formData,
+            type: 'POST',
+            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+            processData: false, // NEEDED, DON'T OMIT THIS
+        })
+        .done((data) => {
+            // window.location.href = "/thanks";
+        });
 });
-

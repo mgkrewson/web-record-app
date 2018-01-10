@@ -6,8 +6,12 @@ var Promise = require("bluebird");
 const fs = Promise.promisifyAll(require("fs"));
 const express = require('express');
 const multer = require('multer');
+var bodyParser = require('body-parser');
 var upload = multer({
     dest: 'temp/'
+});
+var urlencodedParser = bodyParser.urlencoded({
+    extended: false
 });
 
 const app = express();
@@ -47,6 +51,7 @@ fs.readFileAsync(TOKEN_PATH)
 
 app.use(express.static('public'));
 app.use(express.static('bower_components'));
+app.use(bodyParser.json())
 app.set('view engine', 'ejs');
 app.use(function (err, req, res, next) {
     // handle error
@@ -86,53 +91,25 @@ app.get('/play', function (req, res) {
                 console.error
             });
     } else {
-        let requestedID = req.query.id.toString();
-        console.log({
-            requestedID
+        res.render('pages/play', {
+            'title': ' - PLAY'
         });
-        let row;
-        let context = {};
-
-        //get spreadsheet data for id
-        fs.readFileAsync('client_secret.json')
-            .then(content => {
-                return returnClient(content)
-            })
-            .then((authClient) => {
-                return accessSheets(authClient, 'A2:A');
-            })
-            .then((response) => {
-                row = response.values.map((val) => val.toString()).indexOf(requestedID) + 2;
-                console.log({
-                    row
-                });
-                return fs.readFileAsync('client_secret.json')
-            })
-            .then(content => {
-                return returnClient(content)
-            })
-            .then((authClient) => {
-                return accessSheets(authClient, 'A' + row + ':H' + row);
-            })
-            .then((response) => {
-                context = {
-                    'title': ' - PLAY',
-                    'audioTitle': response.values[0][0],
-                    'age': response.values[0][2],
-                    'gender': response.values[0][3],
-                    'location': response.values[0][4],
-                    'audio_url': response.values[0][6],
-                    'picUrl': response.values[0][7],
-                };
-                console.log(context);
-                res.render('pages/play', context);
-            });
-
-
-        //use urls on spreadsheet to query GCS storage
-
-
     }
+});
+
+let count = 0;
+app.post('/random', function(req, res, next) {
+    console.log("got random POST request");
+    if (count >= 4) {
+        res.end();
+    }
+    count++;
+    getRandomID()
+    .then((id) => {
+        console.log(id[0]);
+        res.end(id[0]);
+        // res.end(id);
+    });
 });
 
 function getRandomID() {
@@ -161,7 +138,7 @@ var fileFields = upload.fields([{
     name: 'pic',
     maxCount: 1
 }]);
-app.post('/process_post', fileFields, function (req, res, next) {
+app.post('/record_post', fileFields, function (req, res, next) {
     console.log("POST request received");
     // perform some data validation
 
@@ -200,6 +177,52 @@ app.post('/process_post', fileFields, function (req, res, next) {
         });
 
     res.end();
+
+});
+
+app.post('/play_post', urlencodedParser, function (req, res, next) {
+    console.log("POST request received");
+    console.log(req.body.id);
+
+    let requestedID = req.body.id;
+    let row;
+    let context = {};
+
+    //get spreadsheet data for id
+    fs.readFileAsync('client_secret.json')
+        .then(content => {
+            return returnClient(content)
+        })
+        .then((authClient) => {
+            return accessSheets(authClient, 'A2:A');
+        })
+        .then((response) => {
+            row = response.values.map((val) => val.toString()).indexOf(requestedID) + 2;
+            console.log({
+                row
+            });
+            return fs.readFileAsync('client_secret.json')
+        })
+        .then(content => {
+            return returnClient(content)
+        })
+        .then((authClient) => {
+            return accessSheets(authClient, 'A' + row + ':H' + row);
+        })
+        .then((response) => {
+            context = {
+                'id': requestedID,
+                'audioTitle': response.values[0][0],
+                'age': response.values[0][2],
+                'gender': response.values[0][3],
+                'location': response.values[0][4],
+                'audio_url': response.values[0][6],
+                'pic_url': response.values[0][7]
+            };
+            console.log(context);
+            res.write(JSON.stringify(context));
+            res.end();
+        });
 
 });
 
@@ -246,7 +269,6 @@ function addZeros(int) {
     while (str.length < 5) {
         str = "0" + str;
     }
-    str = "'" + str;
     return str;
 }
 
@@ -255,7 +277,7 @@ function saveNewEntry(authClient) {
     console.log("saveNewEntry is called");
     const data = [
         [
-            state.currentForm.id,
+            "'" + state.currentForm.id,
             state.currentForm.date,
             state.currentForm.age,
             state.currentForm.gender,
@@ -295,8 +317,8 @@ function uploadFile(id, audioFile, picFile, picType, picExt) {
 
     const Storage = require('@google-cloud/storage');
     const storage = new Storage();
-
-    var bucket = storage.bucket('web-record-5f7ce.appspot.com');
+    var bucketName = 'web-record-5f7ce.appspot.com';
+    var bucket = storage.bucket(bucketName);
 
     var audioOptions = {
         destination: '/audio_uploads/' + id + '.oga',
@@ -318,13 +340,24 @@ function uploadFile(id, audioFile, picFile, picType, picExt) {
     return bucket
         .upload(audioFile, audioOptions)
         .then((file) => {
-            console.log("audio upload successful; file location: " + JSON.stringify(file[0].metadata));
-            state.currentForm.audio_url = file[0].metadata.selfLink;
+            console.log("audio upload successful");
+            return file[0].makePublic();
+        })
+        .then((file) => {
+            console.log("audio made public");
+
+            state.currentForm.audio_url = "https://storage.googleapis.com/" + bucketName + audioOptions.destination;
+            console.log("audio_url: " + state.currentForm.audio_url);
             return bucket.upload(picFile, picOptions);
         })
         .then((file) => {
-            console.log("pic upload successful; file location: " + JSON.stringify(file[0].metadata));
-            state.currentForm.pic_url = file[0].metadata.selfLink;
+            console.log("pic made public");
+            return file[0].makePublic();
+        })
+        .then((file) => {
+            console.log("pic upload successful; " + JSON.stringify(file[0]));
+            state.currentForm.pic_url = "https://storage.googleapis.com/" + bucketName + picOptions.destination;
+            console.log("image_url: " + state.currentForm.pic_url);
             return fs.readFileAsync('client_secret.json')
         })
         .then(content => {
@@ -342,18 +375,22 @@ function uploadFile(id, audioFile, picFile, picType, picExt) {
     // [END storage_upload_file]
 }
 
-function downloadFile(bucketName, srcFilename, destFilename) {
+function downloadFile(srcFilename, destFilename) {
+    console.log("downloadFile is called");
+    console.log(arguments);
+
     // [START storage_download_file]
     // Imports the Google Cloud client library
     const Storage = require('@google-cloud/storage');
-
-    // Creates a client
     const storage = new Storage();
+
+    var bucket = storage.bucket('web-record-5f7ce.appspot.com');
+
 
     /**
      * TODO(developer): Uncomment the following lines before running the sample.
      */
-    // const bucketName = 'Name of a bucket, e.g. my-bucket';
+
     // const srcFilename = 'Remote file to download, e.g. file.txt';
     // const destFilename = 'Local destination for file, e.g. ./local/path/to/file.txt';
 
@@ -363,13 +400,12 @@ function downloadFile(bucketName, srcFilename, destFilename) {
     };
 
     // Downloads the file
-    storage
-        .bucket(bucketName)
+    return bucket
         .file(srcFilename)
         .download(options)
         .then(() => {
             console.log(
-                `gs://${bucketName}/${srcFilename} downloaded to ${destFilename}.`
+                srcFilename + ' downloaded'
             );
         })
         .catch(err => {

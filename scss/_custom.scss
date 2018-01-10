@@ -40,7 +40,7 @@ $bg-mask-color: rgba(0,0,0,0.3);
 
 
 .full-bg-image {
-  background: linear-gradient( $bg-mask-color, $bg-mask-color), url('https://images.unsplash.com/photo-1435777940218-be0b632d06db?w=1050&q=80'); // background-image: url('https://images.unsplash.com/photo-1495137215671-61b3f15aedb0?w=1050&q=80');
+  // background: linear-gradient( $bg-mask-color, $bg-mask-color), url('https://images.unsplash.com/photo-1435777940218-be0b632d06db?w=1050&q=80'); // background-image: url('https://images.unsplash.com/photo-1495137215671-61b3f15aedb0?w=1050&q=80');
   background-repeat: no-repeat;
   background-position: center center;
   background-origin: border-box;
@@ -94,7 +94,7 @@ p {
   padding-top: 30px;
 }
 
-#record {
+#record, #play, #back, #next {
   cursor: pointer;
 }
 
@@ -154,8 +154,6 @@ input {
   margin: 0;
 }
 
-
-
 svg {
   margin: -10px -10px 0 -10px;
   border-bottom: 1px solid $light-gray;
@@ -191,8 +189,4 @@ input[type=file] {
 
 .thanks-text {
   padding-top: 20px;
-}
-
-#back {
-  cursor: pointer;
 }
