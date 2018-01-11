@@ -67,7 +67,7 @@
                                             <label class="text-left middle">Age</label>
                                         </div>
                                         <div class="auto cell">
-                                            <input type="number" name="age" value="33" />
+                                            <input type="number" name="age" value="33" max="120" />
                                         </div>
                                     </div>
                                 </div>
@@ -77,7 +77,11 @@
                                             <label class="text-left middle">Gender</label>
                                         </div>
                                         <div class="auto cell">
-                                            <input type="text" value="Male" name="gender" />
+                                            <select value="Male" name="gender">
+                                                <option value="Female">Female</option>
+                                                <option value="Male">Male</option>
+                                            </select>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -87,14 +91,14 @@
                                             <label class="text-left middle">Location</label>
                                         </div>
                                         <div class="auto cell">
-                                            <input type="text" value="USA" name="location" />
+                                            <input type="text" value="USA" name="location" maxlength="40" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="cell auto form-field">
                                     <div class="grid-x grid-padding-x align-center-middle">
                                         <div class="shrink cell">
-                                            <label class="text-left middle">Recording Title</label>
+                                            <label class="text-left middle" maxlength="40">Recording Title</label>
                                         </div>
                                         <div class="auto cell">
                                             <input type="text" value="My Recording" name="title" />
@@ -123,9 +127,12 @@
             </div>
             <div class="cell small-2">
                 <div class="grid-x grid-margin-x align-center align-middle">
-                    <div class="cell shrink text-center">
+                    <div class="cell shrink text-center btn-container">
                         <button id="upload-btn" class="button alert disabled">Upload</button>
-
+                        <div class="spinner hide">
+                            <div class="double-bounce1"></div>
+                            <div class="double-bounce2"></div>
+                          </div>
                     </div>
                 </div>
             </div>

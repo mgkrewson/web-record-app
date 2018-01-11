@@ -1,11 +1,9 @@
-// import { content } from "googleapis/apis";
-
-// import { error } from "util";
-
 var Promise = require("bluebird");
 const fs = Promise.promisifyAll(require("fs"));
 const express = require('express');
 const multer = require('multer');
+const sharp = require('sharp');
+const path = require('path');
 var bodyParser = require('body-parser');
 var upload = multer({
     dest: 'temp/'
@@ -19,8 +17,7 @@ const google = require('googleapis');
 const sheets = google.sheets('v4');
 const googleAuth = require('google-auth-library');
 
-//const { body,validationResult } = require('express-validator/check');
-//const { sanitizeBody } = require('express-validator/filter');
+
 
 var SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 var TOKEN_DIR = __dirname + '/.credentials/';
@@ -98,18 +95,18 @@ app.get('/play', function (req, res) {
 });
 
 let count = 0;
-app.post('/random', function(req, res, next) {
+app.post('/random', function (req, res, next) {
     console.log("got random POST request");
     if (count >= 4) {
         res.end();
     }
     count++;
     getRandomID()
-    .then((id) => {
-        console.log(id[0]);
-        res.end(id[0]);
-        // res.end(id);
-    });
+        .then((id) => {
+            console.log(id[0]);
+            res.end(id[0]);
+            // res.end(id);
+        });
 });
 
 function getRandomID() {
@@ -138,6 +135,8 @@ var fileFields = upload.fields([{
     name: 'pic',
     maxCount: 1
 }]);
+
+
 app.post('/record_post', fileFields, function (req, res, next) {
     console.log("POST request received");
     // perform some data validation
@@ -145,11 +144,24 @@ app.post('/record_post', fileFields, function (req, res, next) {
     console.log(req.files['audio_file'][0].path);
     console.log(req.files['pic'][0].path);
 
+
     // save data to state
     var date = new Date();
     state.currentForm = req.body;
     state.currentForm.date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
     console.log("current state: " + JSON.stringify(state.currentForm));
+
+    const picFile = req.files['pic'][0];
+    const picFilePath = picFile.path;
+    const picExt = picFile.originalname.slice(picFile.originalname.lastIndexOf('.'), picFile.originalname.length);
+    const picType = picFile.mimetype;
+
+    sharp(picFile.path)
+        .max(1200, 1400)
+        .toFile('temp/output' + picExt)
+        .then((info) => {
+            console.log(info);
+        })
 
     fs.readFileAsync('client_secret.json')
         .then(content => {
@@ -164,19 +176,31 @@ app.post('/record_post', fileFields, function (req, res, next) {
         })
         .then((id) => {
             const audioFilePath = req.files['audio_file'][0].path;
-            const picFile = req.files['pic'][0];
-            const picFilePath = picFile.path;
-            const picExt = picFile.originalname.slice(picFile.originalname.lastIndexOf('.'), picFile.originalname.length);
-            const picType = picFile.mimetype;
-
-
-            return uploadFile(id, audioFilePath, picFilePath, picType, picExt);
+            return uploadFile(id, audioFilePath, 'temp/output' + picExt, picType, picExt);
         })
+        .then(() => {
+            fs.readdir('temp/', (err, files) => {
+                if (err) {
+                    return console.error
+                };
+
+                for (const file of files) {
+                    fs.unlink(path.join('temp/', file), err => {
+                        if (err) console.error(err);
+                    });
+                }
+            });
+            /* fs.unlink('temp/output' + picExt, (err) => {
+                console.log("small pic file deleted");
+            }); */
+            res.end(state.currentForm.id);
+        })
+
         .catch((err) => {
             console.error(err);
         });
 
-    res.end();
+
 
 });
 
@@ -207,17 +231,18 @@ app.post('/play_post', urlencodedParser, function (req, res, next) {
             return returnClient(content)
         })
         .then((authClient) => {
-            return accessSheets(authClient, 'A' + row + ':H' + row);
+            return accessSheets(authClient, 'A' + row + ':I' + row);
         })
         .then((response) => {
             context = {
                 'id': requestedID,
                 'audioTitle': response.values[0][0],
-                'age': response.values[0][2],
-                'gender': response.values[0][3],
-                'location': response.values[0][4],
-                'audio_url': response.values[0][6],
-                'pic_url': response.values[0][7]
+                'title': response.values[0][2],
+                'age': response.values[0][3],
+                'gender': response.values[0][4],
+                'location': response.values[0][5],
+                'audio_url': response.values[0][7],
+                'pic_url': response.values[0][8]
             };
             console.log(context);
             res.write(JSON.stringify(context));
@@ -279,6 +304,7 @@ function saveNewEntry(authClient) {
         [
             "'" + state.currentForm.id,
             state.currentForm.date,
+            state.currentForm.title,
             state.currentForm.age,
             state.currentForm.gender,
             state.currentForm.location,
@@ -292,7 +318,7 @@ function saveNewEntry(authClient) {
 
     var request = {
         spreadsheetId: '13qJXcfrmwcfP8bzlHQxAkJo0_2QdvuG9X1bCfwvvMO8',
-        range: 'A2:K2',
+        range: 'A2:I2',
         insertDataOption: "INSERT_ROWS",
         valueInputOption: "USER_ENTERED",
         resource: {
