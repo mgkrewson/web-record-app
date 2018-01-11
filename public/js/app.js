@@ -1,9 +1,11 @@
 /********************************************
- * Initialize, Taking Current Page Into Account
+ * Initialize
  */
 
-$(document).foundation();
+$(document).foundation();  // necessary for Foundation scripts
 $(document).ready(() => {
+
+    /* Determine current page */
     if (window.location.href.indexOf("/thanks") > 0) {
         init.thanks();
     }
@@ -12,7 +14,7 @@ $(document).ready(() => {
         init.play();
     }
 
-    /*****  JQUERY EVENT LISTENERS *********/
+    /* JQUERY EVENT LISTENERS */
     // Record Page
     $("#record").on('click', handle.recordButton);
     $("#reset").on('click', handle.reset);
@@ -41,6 +43,7 @@ $(document).ready(() => {
 
 });
 
+/* Class lists for RECORD button */
 let buttonstate = {
     play: 'fa fa-5x fa-play primary-color',
     record: 'fa fa-5x fa-microphone success-color',
@@ -48,13 +51,19 @@ let buttonstate = {
     pause: 'fa fa-5x fa-pause primary-color',
 }
 
+
 let init = {
+    /* Get current ID from URL */
     getPageID: function () {
         return window.location.href.slice(window.location.href.indexOf("=") + 1);
     },
+    
+    /* THANKS page: Attach appropriate link to user's new recording */
     thanks: function () {
         $('#play-ref').attr('href', '/play?id=' + this.getPageID());
     },
+
+    /* PLAY page: Send POST request for entry data */
     play: function () {
         $.post("/play_post", {
             id: this.getPageID()
@@ -71,6 +80,7 @@ let init = {
                 "background-attachment": "fixed",
             };
 
+            /* Attach data to appropriate elements */
             $('.full-bg-image').css(css);
             $('#player').attr('src', context.audio_url);
             $('#audio-title').text(context.title);
@@ -90,6 +100,7 @@ let init = {
  */
 
 let handle = {
+    /* RECORD Button is Pressed */
     recordButton: function() {
         if (!media.recording && !media.playAvailable) {
             controls.startRecording();
@@ -106,6 +117,7 @@ let handle = {
         }
     },
 
+    /* Run Everytime A Form Component is Changed */
     formChange: function() {
         if (validate.complete()) {
             $("#upload-btn").removeClass('disabled');
@@ -114,6 +126,7 @@ let handle = {
         }
     },
 
+    /* Triggered by value change on any INPUT field */
     inputChange: function() {
         if ($(this).attr('name') === "age" || $(this).attr('name') === "email") {
             $(this).siblings().remove();
@@ -121,6 +134,7 @@ let handle = {
         handle.formChange();
     },
 
+    /* Triggered by file change on INPUT[type=FILE]  */
     picSelect: function() {
         let file = $("#pic").prop('files')[0];
         let url = window.URL.createObjectURL(file);
@@ -129,6 +143,7 @@ let handle = {
         $("#pic").parent().append(html);
     },
 
+    /* RESET Button is Pressed */
     reset: function() {
         media.recording = false;
         media.playAvailable = false;
@@ -140,7 +155,10 @@ let handle = {
         handle.formChange();
     },
 
+    /* UPLOAD Button is Pressed */
     upload: function() {
+
+        /* Validate Form */
         if (!validate.complete()) {
             alert('Make sure all fields are filled out!');
             return;
@@ -149,18 +167,20 @@ let handle = {
             return;
         }
 
+        /* Create file object from blob object, attach to form */
         var file = new File([media.blobFile], "test.oga");
         var form = $('form')[0];
         var formData = new FormData(form);
         formData.append('audio_file', file);
 
-        // console.log(formData);
+        /* Trigger loading animation */
         $('#upload-btn').css({
             'color': '#cc4b37',
             'background-color': '#cc4b37'
         });
         $('.spinner').removeClass('hide');
 
+        /* Send POST request */
         $.ajax({
                 url: '/record_post',
                 data: formData,
@@ -174,9 +194,12 @@ let handle = {
             });
     },
 
+    /* NEXT Button is Pressed */
     next: function() {
         let run = true;
         let newID;
+
+        /* Get new page ID and make sure it's not the same as the current ID */
         let id = init.getPageID();
         do {
             $.post("/random", (newID) => {
@@ -188,22 +211,10 @@ let handle = {
             });
         }
         while (newID == id)
-    },
-
-    mediaStop: function(e) {
-        console.log("recorder stopped");
-        var blob = new Blob(media.chunks, {
-            'type': 'audio/ogg; codecs=opus'
-        });
-        media.chunks = [];
-        media.blobFile = blob;
-        media.file = new File([blob], "recorded_audio");
-        let audioURL = window.URL.createObjectURL(blob);
-        $("#player").attr("src", audioURL);
-        handle.formChange();
     }
 };
 
+/* Control Actions Taken When Record Button is Pressed */
 let controls = {
     startRecording: function() {
         media.mediaRecorder.start();
@@ -213,16 +224,39 @@ let controls = {
         console.log("recorder started");
         $('#record').removeClass().addClass(buttonstate.stop);
     },
+
+    /* Triggered by RECORD button */
     stopRecording: function() {
         media.mediaRecorder.stop();
         media.recording = false;
-        console.log(media.mediaRecorder.state);
-        console.log("recorder stopped");
         clearInterval(countdown);
+        console.log("recorder stopped");
+        console.log(media.mediaRecorder.state);
         $("#record").removeClass().addClass(buttonstate.play);
         $("#reset").removeClass('reset-disabled').addClass('alert-color');
-        media.playAvailable = true;
     },
+
+    /* Triggered by MEDIA ONSTOP event */
+    mediaStop: function(e) {
+
+        /* Create and Save Blob from Recording */
+        var blob = new Blob(media.chunks, {
+            'type': 'audio/ogg; codecs=opus'
+        });
+        media.chunks = [];
+        media.blobFile = blob;
+        media.file = new File([blob], "recorded_audio");
+
+        /* Attach Blob to Audio Player */
+        let audioURL = window.URL.createObjectURL(blob);
+        $("#player").attr("src", audioURL);
+        
+        
+        media.playAvailable = true;
+        handle.formChange();
+    },
+
+    /* This starts a timer, like it says */
     startTimer: function() {
         let seconds = 30;
         countdown = setInterval(() => {
@@ -230,9 +264,11 @@ let controls = {
             let secString = seconds < 10 ? "0" + seconds.toString() : seconds.toString();
             let display = "0:" + secString;
             $('#timer').text(display);
+
+            /* Trigger the recording stop functions if time runs out */
             if (seconds === 0) {
                 clearInterval(countdown);
-                stopRecording();
+                controls.stopRecording();
                 alert('times up!');
             }
         }, 1000);
@@ -258,10 +294,15 @@ let media = {
 };
 
 navigator.mediaDevices.getUserMedia({
+
+    /* Access the Microphone */
         audio: true,
         video: false
     })
+
     .then(function (stream) {
+
+        /* Create mediaRecorder and Event Listeners */
         media.mediaRecorder = new MediaRecorder(stream);
 
         media.mediaRecorder.ondataavailable = function (e) {
@@ -269,7 +310,7 @@ navigator.mediaDevices.getUserMedia({
         }
 
         media.mediaRecorder.onstop = function (e) {
-            handle.mediaStop(e);
+            controls.mediaStop(e);
         }
     })
     .catch(function (err) {
@@ -286,8 +327,12 @@ navigator.mediaDevices.getUserMedia({
 
 let validate = {
     inputNamesArray: ['age', 'location', 'title', 'email'],
+
+    /* Check all form elements for completeness */
     complete: function () {
         let complete = true;
+
+        /* Check INPUT tags */
         for (item in this.inputNamesArray) {
             let selector = $('input[name="' + this.inputNamesArray[item] + '"]');
             console.log(this.inputNamesArray[item] + ": " + selector.val());
@@ -296,16 +341,20 @@ let validate = {
                 complete = false;
             }
         }
+
+        /* Check SELECT tag */
         console.log('gender: ' + $('select[name="gender"]').val());
         if (!$('select[name="gender"]').val()) {
             complete = false;
         }
 
+        /* Check PIC UPLOAD */
         console.log('pic files: ' + $('#pic').prop('files').length);
         if ($('#pic').prop('files').length < 1) {
             complete = false;
         }
 
+        /* Check BLOB */
         console.log("blob: " + media.blobFile);
         if (media.blobFile === null) {
             complete = false;
@@ -314,6 +363,7 @@ let validate = {
 
         return complete;
     },
+
     filter: function () {
         let areWeGood = true;
 
@@ -347,17 +397,17 @@ let validate = {
         }
 
         /* Trim and escape html */
-        for (item in inputNamesArray) {
-            let selector = $('input[name="' + inputNamesArray[item] + '"]');
+        for (item in validate.inputNamesArray) {
+            let selector = $('input[name="' + validate.inputNamesArray[item] + '"]');
             let val = selector.val();
             let trimVal = val.trim();
-            let sanitizedVal = escapeHtml(val);
+            let sanitizedVal = validate.escapeHTML(val);
             selector.val(sanitizedVal);
         }
 
         return areWeGood;
     },
-    escapeHTML: function () {
+    escapeHTML: function (str) {
         var entityMap = {
             '&': '&amp;',
             '<': '&lt;',
@@ -368,7 +418,7 @@ let validate = {
             '`': '&#x60;',
             '=': '&#x3D;'
         };
-        return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+        return String(str).replace(/[&<>"'`=\/]/g, function (s) {
             return entityMap[s];
         });
     }
