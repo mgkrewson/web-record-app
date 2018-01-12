@@ -2,7 +2,7 @@
   "name": "tell-me-more",
   "version": "1.0.0",
   "description": "Demo app for recording short snippets and sharing.",
-  "main": "gulpfile.js",
+  "main": "server.js",
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
