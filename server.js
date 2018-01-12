@@ -9,8 +9,8 @@ const handlers = require('./route_handlers.js');
 
 const hostname = '127.0.0.1';
 const listenPort = process.env.PORT || 3000;
-const server = app.listen(listenPort, hostname, function () {
-    let host = server.address().address;
+const server = app.listen(listenPort, function () {
+    // let host = server.address().address;
     let port = server.address().port;
     console.log('Server running at http://%s:%s/', host, port);
 });
