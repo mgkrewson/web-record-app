@@ -8,24 +8,31 @@ const createEntry = ({
     picfile,
     audioFilePath
 }) => ({
-    id = "",
-    setDate() {
-        const date = new Date();
-        this.date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear()
-        return this;
-    },
     audioTitle,
     age,
     gender,
     location,
     email,
-    audio_url = "",
-    pic_url = "",
-    audioFilePath = audioFilePath,
-    picFilePath = 'temp/output',
+    audioFilePath,
+    setID(id) {
+        this.id = id;
+    },
+    setDate() {
+        const date = new Date();
+        this.date = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+        return this;
+    },
+    setAudioUrl(audio_url) {
+        this.audio_url = audio_url;
+    },
+    setPicUrl(pic_url) {
+        this.pic_url = pic_url;
+    },
     setPic(picfile) {
-        this.picExt = this.picFile.originalname.slice(picFile.originalname.lastIndexOf('.'), picFile.originalname.length);
-        this.picType = this.picFile.mimetype;
+        this.picExt = picfile.originalname.slice(picfile.originalname.lastIndexOf('.'), picfile.originalname.length);
+        this.picType = picfile.mimetype;
+        this.picFilePath = 'temp/output' + this.picExt;
+        this.picOriginalPath = picfile.path;
         return this;
     }
 });

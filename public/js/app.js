@@ -5,13 +5,9 @@
 $(document).foundation();  // necessary for Foundation scripts
 $(document).ready(() => {
 
-    /* Determine current page */
+    /* Supply recording ID to THANKS page */
     if (window.location.href.indexOf("/thanks") > 0) {
         init.thanks();
-    }
-
-    if (window.location.href.indexOf("/play") > 0) {
-        init.play();
     }
 
     /* JQUERY EVENT LISTENERS */
@@ -63,33 +59,6 @@ let init = {
         $('#play-ref').attr('href', '/play?id=' + this.getPageID());
     },
 
-    /* PLAY page: Send POST request for entry data */
-    play: function () {
-        $.post("/play_post", {
-            id: this.getPageID()
-        }, function (data) {
-            let context = JSON.parse(data);
-            // console.log(context);
-            let maskColor = "rgba(0,0,0,0.3)";
-            let css = {
-                "background": "linear-gradient( " + maskColor + "," + maskColor + "), url(' " + context.pic_url + " ')",
-                "background-repeat": "no-repeat",
-                "background-position": "center center",
-                "background-origin": "border-box",
-                "background-size": "cover",
-                "background-attachment": "fixed",
-            };
-
-            /* Attach data to appropriate elements */
-            $('.full-bg-image').css(css);
-            $('#player').attr('src', context.audio_url);
-            $('#audio-title').text(context.title);
-            $('#age').text(context.age);
-            $('#gender').text(context.gender);
-            $('#location').text(context.location);
-
-        });
-    }
 };
 
 /********************************************/

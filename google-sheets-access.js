@@ -15,11 +15,12 @@ fs.readFileAsync(TOKEN_PATH)
     });
 
 function getClientSecret() {
+    console.log("getclientSecret called");
     return fs.readFileAsync('client_secret.json');
 }
 
 function returnClient(content) {
-
+    console.log("returnClient called");
     credentials = JSON.parse(content);
     clientSecret = credentials.installed.client_secret;
     clientId = credentials.installed.client_id;
@@ -32,7 +33,7 @@ function returnClient(content) {
 }
 
 function getQuery(authClient, range) {
-    console.log("accessSheets called");
+    console.log("getQuery called");
 
     var request = {
         spreadsheetId: '13qJXcfrmwcfP8bzlHQxAkJo0_2QdvuG9X1bCfwvvMO8',
@@ -45,6 +46,7 @@ function getQuery(authClient, range) {
 }
 
 function getRange(range) {
+    console.log("getRange called");
     return getClientSecret()
         .then((content) => {
             let client = returnClient(content);
@@ -57,6 +59,7 @@ function getRange(range) {
 }
 
 function uploadQuery(client, range, data) {
+    console.log("uploadQuery called");
     var request = {
         spreadsheetId: '13qJXcfrmwcfP8bzlHQxAkJo0_2QdvuG9X1bCfwvvMO8',
         range: range,
@@ -65,7 +68,7 @@ function uploadQuery(client, range, data) {
         resource: {
             values: data
         },
-        auth: authClient,
+        auth: client,
     };
     return Promise.promisify(sheets.spreadsheets.values.append)(request);
 }
@@ -76,7 +79,7 @@ function saveNewEntry(entry) {
         [
             "'" + entry.id,
             entry.date,
-            entry.title,
+            entry.audioTitle,
             entry.age,
             entry.gender,
             entry.location,

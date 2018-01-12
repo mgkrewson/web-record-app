@@ -1,7 +1,10 @@
 <!doctype html>
 <html class="no-js" lang="en">
 
-<% include ../partials/head %>
+<head id="head">
+    <% include ../partials/head %>
+</head>
+
 <body>
     <div class="grid-y grid-padding-y" id="page-y-grid">
         <% include ../partials/header %>
@@ -9,118 +12,118 @@
 
                 <% include ../partials/close-button %>
 
-                <div class="grid-x align-center-middle full-height">
+                    <div class="grid-x align-center-middle full-height">
 
 
-                    <!-- LEFT PANE -->
-                    <div class="cell small-12 medium-4" id="left-pane">
-                        <div class="grid-y align-center-middle" style="height: 100%;">
-                            <div class="cell small-4 full-width">
-                                <div class="grid-x align-center-middle full-height">
-                                    <div class="grid-x grid-padding-x align-center full-width align-self-top">
-                                        <div class="cell small-4 text-center align-self-top">
-                                            <i class="fa fa-microphone fa-5x success-color" aria-hidden="true" id="record"></i>
-                                            <audio id="player" name="player" class="hide" >
-                                            </audio>
-                                        </div>
-                                        <div class="cell small-4 text-center">
-                                            <i class="fa fa-undo fa-5x reset-disabled" aria-hidden="true" id="reset"></i>
+                        <!-- LEFT PANE -->
+                        <div class="cell small-12 medium-4" id="left-pane">
+                            <div class="grid-y align-center-middle" style="height: 100%;">
+                                <div class="cell small-4 full-width">
+                                    <div class="grid-x align-center-middle full-height">
+                                        <div class="grid-x grid-padding-x align-center full-width align-self-top">
+                                            <div class="cell small-4 text-center align-self-top">
+                                                <i class="fa fa-microphone fa-5x success-color" aria-hidden="true" id="record"></i>
+                                                <audio id="player" name="player" class="hide">
+                                                </audio>
+                                            </div>
+                                            <div class="cell small-4 text-center">
+                                                <i class="fa fa-undo fa-5x reset-disabled" aria-hidden="true" id="reset"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="cell small-1" id="visualize">
-                            </div>
-                            <div class="cell small-3">
-                                <h1 class="text-center" id="timer">0:30</h1>
+                                <!-- <div class="cell small-1" id="visualize">
+                                </div> -->
+                                <div class="cell small-3">
+                                    <h1 class="text-center" id="timer">0:30</h1>
+                                </div>
+
+
                             </div>
 
 
                         </div>
 
 
-                    </div>
 
+                        <!-- RIGHT PANE -->
+                        <div class="cell small-12 medium-4" id="right-pane">
 
+                            <div class="grid-y align-middle" style="height:100%;">
+                                <form id="recording-info" method="POST" action="/process_post" enctype="multipart/form-data">
 
-                    <!-- RIGHT PANE -->
-                    <div class="cell small-12 medium-4" id="right-pane">
+                                    <div class="cell auto form-field">
+                                        <div class="grid-x grid-padding-x align-center-middle" style="margin-bottom: 1rem;">
+                                            <div class="shrink cell">
+                                                <button class="button primary" id="upload-pic">UPLOAD PIC</button>
+                                            </div>
+                                            <div class="auto cell text-center">
+                                                <input type="file" name="pic" id="pic" class="hide" accept="image/*" />
 
-                        <div class="grid-y align-middle" style="height:100%;">
-                            <form id="recording-info" method="POST" action="/process_post" enctype="multipart/form-data">
-
-                                <div class="cell auto form-field">
-                                    <div class="grid-x grid-padding-x align-center-middle" style="margin-bottom: 1rem;">
-                                        <div class="shrink cell">
-                                            <button class="button primary" id="upload-pic">UPLOAD PIC</button>
-                                        </div>
-                                        <div class="auto cell text-center">
-                                            <input type="file" name="pic" id="pic" class="hide" accept="image/*"/>
-                                            
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="cell auto form-field">
-                                    <div class="grid-x grid-padding-x align-center-middle">
-                                        <div class="shrink cell">
-                                            <label class="text-left middle">Age</label>
-                                        </div>
-                                        <div class="auto cell">
-                                            <input type="number" name="age" value="33" max="120" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="cell auto form-field">
-                                    <div class="grid-x grid-padding-x align-center-middle">
-                                        <div class="shrink cell">
-                                            <label class="text-left middle">Gender</label>
-                                        </div>
-                                        <div class="auto cell">
-                                            <select value="Male" name="gender">
-                                                <option value="Female">Female</option>
-                                                <option value="Male">Male</option>
-                                            </select>
-                                            
+                                    <div class="cell auto form-field">
+                                        <div class="grid-x grid-padding-x align-center-middle">
+                                            <div class="shrink cell">
+                                                <label class="text-left middle">Age</label>
+                                            </div>
+                                            <div class="auto cell">
+                                                <input type="number" name="age" value="33" max="120" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="cell auto form-field">
-                                    <div class="grid-x grid-padding-x align-center-middle">
-                                        <div class="shrink cell">
-                                            <label class="text-left middle">Location</label>
-                                        </div>
-                                        <div class="auto cell">
-                                            <input type="text" value="USA" name="location" maxlength="40" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="cell auto form-field">
-                                    <div class="grid-x grid-padding-x align-center-middle">
-                                        <div class="shrink cell">
-                                            <label class="text-left middle" maxlength="40">Recording Title</label>
-                                        </div>
-                                        <div class="auto cell">
-                                            <input type="text" value="My Recording" name="title" />
-                                        </div>
-                                    </div>
-                                </div>
+                                    <div class="cell auto form-field">
+                                        <div class="grid-x grid-padding-x align-center-middle">
+                                            <div class="shrink cell">
+                                                <label class="text-left middle">Gender</label>
+                                            </div>
+                                            <div class="auto cell">
+                                                <select value="Male" name="gender">
+                                                    <option value="Female">Female</option>
+                                                    <option value="Male">Male</option>
+                                                </select>
 
-                                <div class="cell auto form-field">
-                                    <div class="grid-x grid-padding-x align-center-middle">
-                                        <div class="shrink cell">
-                                            <label class="text-left middle">Email</label>
-                                        </div>
-                                        <div class="auto cell">
-                                            <input type="email" value="you@me.com" name="email" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
+                                    <div class="cell auto form-field">
+                                        <div class="grid-x grid-padding-x align-center-middle">
+                                            <div class="shrink cell">
+                                                <label class="text-left middle">Location</label>
+                                            </div>
+                                            <div class="auto cell">
+                                                <input type="text" value="USA" name="location" maxlength="40" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cell auto form-field">
+                                        <div class="grid-x grid-padding-x align-center-middle">
+                                            <div class="shrink cell">
+                                                <label class="text-left middle" maxlength="40">Recording Title</label>
+                                            </div>
+                                            <div class="auto cell">
+                                                <input type="text" value="My Recording" name="title" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="cell auto form-field">
+                                        <div class="grid-x grid-padding-x align-center-middle">
+                                            <div class="shrink cell">
+                                                <label class="text-left middle">Email</label>
+                                            </div>
+                                            <div class="auto cell">
+                                                <input type="email" value="you@me.com" name="email" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
                         </div>
-
                     </div>
-                </div>
 
 
 
@@ -132,7 +135,7 @@
                         <div class="spinner hide">
                             <div class="double-bounce1"></div>
                             <div class="double-bounce2"></div>
-                          </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -144,7 +147,7 @@
 
     <% include ../partials/google-scripts.ejs %>
         <% include ../partials/scripts.ejs %>
-        <script src="js/visualizer.js"></script>
-            </body>
+            <!-- <script src="js/visualizer.js"></script> -->
+</body>
 
 </html>

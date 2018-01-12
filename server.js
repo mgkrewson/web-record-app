@@ -63,13 +63,13 @@ app.post('/random', function (req, res, next) {
     handlers.postRandom(req, res, next);
 });
 
-// app.post('/record_post', fileFields, function (req, res, next) {
-//     handlers.recordPost(req, res, next);
-// });
-
-app.post('/play_post', urlencodedParser, function (req, res, next) {
-    handlers.playPost(req, res, next);
+app.post('/record_post', fileFields, function (req, res, next) {
+    handlers.recordPost(req, res, next);
 });
+
+// app.post('/play_post', urlencodedParser, function (req, res, next) {
+//     handlers.playPost(req, res, next);
+// });
 
 
 

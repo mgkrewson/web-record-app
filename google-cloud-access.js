@@ -25,8 +25,8 @@ function uploadFiles(entry) {
     };
 
     // Store URLs to Entry Object
-    entry.audio_url = "https://storage.googleapis.com/" + bucketName + audioOptions.destination;
-    state.currentEntry.pic_url = "https://storage.googleapis.com/" + bucketName + picOptions.destination;
+    entry.setAudioUrl("https://storage.googleapis.com/" + bucketName + audioOptions.destination);
+    entry.setPicUrl("https://storage.googleapis.com/" + bucketName + picOptions.destination);
 
     // Upload files to the bucket
     return bucket

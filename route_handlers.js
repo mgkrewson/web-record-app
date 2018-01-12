@@ -37,10 +37,10 @@ function addZeros(int) {
 }
 
 function deleteTempFiles() {
-    return fs.readdir('temp/')
+    return fs.readdirAsync('temp/')
         .then((files) => {
             for (const file of files) {
-                fs.unlink(path.join('temp/', file))
+                fs.unlinkAsync(path.join('temp/', file))
                     .then((err) => console.error);
             }
         })
@@ -81,9 +81,9 @@ function getPlay(req, res) {
             })
             .then((response) => {
                 let context = {
-                    'id': requestedID,
-                    'audioTitle': response.values[0][0],
-                    'title': response.values[0][2],
+                    // 'id': requestedID,
+                    'audioTitle': response.values[0][2],
+                    'title': " - PLAY",
                     'age': response.values[0][3],
                     'gender': response.values[0][4],
                     'location': response.values[0][5],
@@ -91,7 +91,7 @@ function getPlay(req, res) {
                     'pic_url': response.values[0][8]
                 };
                 console.log(context);
-                res.render('views/play', context);
+                res.render('pages/play', context);
             })
     }
 }
@@ -99,23 +99,25 @@ function getPlay(req, res) {
 function recordPost(req, res, next) {
     console.log("POST request received");
 
-    let entry = createEntry({
+    let entry = createEntry.createEntry({
         audioTitle: req.body.title,
         age: req.body.age,
         gender: req.body.gender,
         location: req.body.location,
-        email: req.bod.email,
-        picfile: req.files['pic'][0],
+        email: req.body.email,
         audioFilePath: req.files['audio_file'][0].path
     });
+    entry.setDate();
+    entry.setPic(req.files['pic'][0]);
+    console.log(entry);
 
     gSheets.getRange("A2:A")
         .then((response) => {
             let id = getNewID(response);
-            entry.id = id;
-            return sharp(entry.picFilePath)
+            entry.setID(id);
+            return sharp(entry.picOriginalPath)
                 .max(1200, 1400)
-                .toFile('temp/output' + picExt)
+                .toFile('temp/output' + entry.picExt)
                 .then((info) => {
                     console.log(info);
                 })
@@ -124,7 +126,7 @@ function recordPost(req, res, next) {
             return gcsStorage.uploadFiles(entry);
         })
         .then((entry) => {
-            return saveNewEntry(entry);
+            return gSheets.saveNewEntry(entry);
         })
         .then(() => {
             res.end(entry.id);
