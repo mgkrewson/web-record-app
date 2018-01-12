@@ -4,6 +4,7 @@ const multer = require('multer');
 const upload = multer({
     dest: 'temp/'
 });
+const path = require('path');
 const bodyParser = require('body-parser');
 const handlers = require('./route_handlers.js');
 
