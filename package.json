@@ -13,18 +13,17 @@
     "nodemon": "^1.14.10"
   },
   "scripts": {
-    "start": "gulp",
+    "start": "node server.js",
     "build": "gulp sass"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zurb/foundation-sites-template.git"
+    "url": "https://github.com/mgkrewson/web-record-app.git"
   },
   "bugs": {
-    "url": "https://github.com/zurb/foundation-sites/issues",
-    "email": "foundation@zurb.com"
+    "email": "mgkrewson@gmail.com"
   },
-  "author": "ZURB <foundation@zurb.com>",
+  "author": "mkrewson",
   "license": "MIT",
   "private": true,
   "dependencies": {
