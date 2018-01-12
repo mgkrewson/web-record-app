@@ -17,8 +17,8 @@ const server = app.listen(listenPort, function () {
 
 
 /* Define Middleware */
-app.use(express.static('public'));
-app.use(express.static('bower_components'));
+app.use(express.static(path.join(__dirname,'public')));
+app.use(express.static(path.join(__dirname,'bower_components')));
 app.use(bodyParser.json())
 app.set('view engine', 'ejs');
 app.use(function (err, req, res, next) {
