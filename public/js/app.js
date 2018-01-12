@@ -2,13 +2,23 @@
  * Initialize
  */
 
-$(document).foundation();  // necessary for Foundation scripts
+$(document).foundation(); // necessary for Foundation scripts
 $(document).ready(() => {
+
+    // $('#starting-mask').css({'background-color': 'transparent' });
+    // $('#starting-mask').delay(600).css({'z-index': '0'})
 
     /* Supply recording ID to THANKS page */
     if (window.location.href.indexOf("/thanks") > 0) {
         init.thanks();
     }
+
+    let fadeOut = setInterval(function () {
+        if ($('body').hasClass('full-bg-image')) {
+            $('#starting-mask').fadeOut(600);
+            clearInterval('fadOut');
+        }
+    }, 100);
 
     /* JQUERY EVENT LISTENERS */
     // Record Page
@@ -53,7 +63,7 @@ let init = {
     getPageID: function () {
         return window.location.href.slice(window.location.href.indexOf("=") + 1);
     },
-    
+
     /* THANKS page: Attach appropriate link to user's new recording */
     thanks: function () {
         $('#play-ref').attr('href', '/play?id=' + this.getPageID());
@@ -70,7 +80,7 @@ let init = {
 
 let handle = {
     /* RECORD Button is Pressed */
-    recordButton: function() {
+    recordButton: function () {
         if (!media.recording && !media.playAvailable) {
             controls.startRecording();
         } else if (media.recording) {
@@ -87,7 +97,7 @@ let handle = {
     },
 
     /* Run Everytime A Form Component is Changed */
-    formChange: function() {
+    formChange: function () {
         if (validate.complete()) {
             $("#upload-btn").removeClass('disabled');
         } else if (!$("#upload-btn").hasClass('disabled')) {
@@ -96,7 +106,7 @@ let handle = {
     },
 
     /* Triggered by value change on any INPUT field */
-    inputChange: function() {
+    inputChange: function () {
         if ($(this).attr('name') === "age" || $(this).attr('name') === "email") {
             $(this).siblings().remove();
         }
@@ -104,7 +114,7 @@ let handle = {
     },
 
     /* Triggered by file change on INPUT[type=FILE]  */
-    picSelect: function() {
+    picSelect: function () {
         let file = $("#pic").prop('files')[0];
         let url = window.URL.createObjectURL(file);
         let html = '<img height="50" src="' + url + '" class="thumb" />';
@@ -113,7 +123,7 @@ let handle = {
     },
 
     /* RESET Button is Pressed */
-    reset: function() {
+    reset: function () {
         media.recording = false;
         media.playAvailable = false;
         media.blobFile = null;
@@ -125,7 +135,7 @@ let handle = {
     },
 
     /* UPLOAD Button is Pressed */
-    upload: function() {
+    upload: function () {
 
         /* Validate Form */
         if (!validate.complete()) {
@@ -164,20 +174,27 @@ let handle = {
     },
 
     /* NEXT Button is Pressed */
-    next: function() {
-        let run = true;
-        let newID;
+    next: function () {
+        $('#starting-mask').fadeIn(500);
 
         /* Get new page ID and make sure it's not the same as the current ID */
+
         let id = init.getPageID();
+        let newID = "";
         do {
-            $.post("/random", (newID) => {
-                if (newID != id) {
-                    console.log("successful if statement");
-                    run = false;
+            $.ajax({
+                    url: '/random',
+                    type: 'POST',
+                    data: {},
+                    contentType: false,
+                    processData: false,
+                })
+                .done((resID) => {
+                    newID = resID;
+                    console.log(newID);
+                    console.log(newID == id);
                     window.location.href = "/play?id=" + newID;
-                }
-            });
+                });
         }
         while (newID == id)
     }
@@ -185,7 +202,7 @@ let handle = {
 
 /* Control Actions Taken When Record Button is Pressed */
 let controls = {
-    startRecording: function() {
+    startRecording: function () {
         media.mediaRecorder.start();
         media.recording = true;
         controls.startTimer();
@@ -195,7 +212,7 @@ let controls = {
     },
 
     /* Triggered by RECORD button */
-    stopRecording: function() {
+    stopRecording: function () {
         media.mediaRecorder.stop();
         media.recording = false;
         clearInterval(countdown);
@@ -206,7 +223,7 @@ let controls = {
     },
 
     /* Triggered by MEDIA ONSTOP event */
-    mediaStop: function(e) {
+    mediaStop: function (e) {
 
         /* Create and Save Blob from Recording */
         var blob = new Blob(media.chunks, {
@@ -219,14 +236,14 @@ let controls = {
         /* Attach Blob to Audio Player */
         let audioURL = window.URL.createObjectURL(blob);
         $("#player").attr("src", audioURL);
-        
-        
+
+
         media.playAvailable = true;
         handle.formChange();
     },
 
     /* This starts a timer, like it says */
-    startTimer: function() {
+    startTimer: function () {
         let seconds = 30;
         countdown = setInterval(() => {
             seconds--;
@@ -264,7 +281,7 @@ let media = {
 
 navigator.mediaDevices.getUserMedia({
 
-    /* Access the Microphone */
+        /* Access the Microphone */
         audio: true,
         video: false
     })

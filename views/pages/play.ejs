@@ -1,75 +1,102 @@
 <!doctype html>
 <html class="no-js" lang="en">
-    <head id="head">
-        <% include ../partials/head %>
+
+<head id="head">
+    <% include ../partials/head %>
+
+        <script>
+            var preload = new Image();
+            preload.onload = function () {
+                document.body.classList.remove('hide');
+                document.body.classList.add('full-bg-image');
+                let mask = document.getElementById('starting-mask');
+            }
+            preload.onerror = function () {
+                console.log("I guess it didn't work");
+            }
+            preload.src = '<%- pic_url %>';
+        </script>
         <style>
-                .full-bg-image{
-                    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('<%- pic_url %>');
-                    background-repeat: no-repeat;
-                    background-position: center center;
-                    background-origin: border-box;
-                    background-size: cover;
-                    background-attachment: fixed;
-                }
-                
+            .full-bg-image {
+                background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('<%- pic_url %>');
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-origin: border-box;
+                background-size: cover;
+                background-attachment: fixed;
+            }
         </style>
-    </head>
-    <body class="full-bg-image">
+</head>
 
-        <div class="grid-y align-center-middle " id="page-y-grid">
-                <div class="text-center" id="close-button">
-                        <a href="/">
-                            <i class="fa fa-times-circle-o fa-3x" style="color:white" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                <div class="cell small-1"></div>
-                <div class="cell small-3 full-width">
-                    <div class="grid-x align-center-middle full-width full-height">
-                        <div class="cell small-12 medium-8 text-center">
-                            <h1 class="heavy-text" id="audio-title"><%- audioTitle %></h1>
-                        </div>
-                    </div>
+<body class="hide">
+    <div id="starting-mask"></div>
+
+    <div class="grid-y align-center-middle " id="page-y-grid">
+        <div class="text-center" id="close-button">
+            <a href="/">
+                <i class="fa fa-times-circle-o fa-3x" style="color:white" aria-hidden="true"></i>
+            </a>
+        </div>
+        <div class="cell small-1"></div>
+        <div class="cell small-3 full-width">
+            <div class="grid-x align-center-middle full-width full-height">
+                <div class="cell small-12 medium-8 text-center">
+                    <h1 class="heavy-text" id="audio-title">
+                        <%- audioTitle %>
+                    </h1>
                 </div>
-
-                <div class="cell small-1 full-width">
-                    <div class="grid-x align-center-middle full-width full-height">
-                        <div class="cell small-3 text-center">
-                            <div class="grid-x align-center">
-                                <div class="cell small-4 text-center">
-                                    <i class="fa fa-chevron-left fa-3x" id="back" aria-hidden="true"></i>
-                                </div>
-                                <div class="cell small-4 text-center">
-                                    <i class="fa fa-play fa-3x" id="play" aria-hidden="true"></i>
-                                    <audio id="player" name="player" class="hide" src="<%- audio_url %>"></audio>
-                                </div>
-                                <div class="cell small-4 text-center">
-                                    <i class="fa fa-chevron-right fa-3x" id="next" aria-hidden="true"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cell small-2 full-width">
-                    <div class="grid-x align-center-middle full-width full-height">
-                        <div class="cell small-5 text-center">
-                            <h3>Age: <span id="age"><%- age %></span> | <span id="gender"><%- gender %></span> | <span id="location"><%- location %></span></h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="cell small-1"></div>
-
-
-                <% include ../partials/footer %>
-
+            </div>
         </div>
 
+        <div class="cell small-1 full-width">
+            <div class="grid-x align-center-middle full-width full-height">
+                <div class="cell small-3 text-center">
+                    <div class="grid-x align-center">
+                        <div class="cell small-4 text-center">
+                            <i class="fa fa-chevron-left fa-3x" id="back" aria-hidden="true"></i>
+                        </div>
+                        <div class="cell small-4 text-center">
+                            <i class="fa fa-play fa-3x" id="play" aria-hidden="true"></i>
+                            <audio id="player" name="player" class="hide" src="<%- audio_url %>"></audio>
+                        </div>
+                        <div class="cell small-4 text-center">
+                            <i class="fa fa-chevron-right fa-3x" id="next" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cell small-2 full-width">
+            <div class="grid-x align-center-middle full-width full-height">
+                <div class="cell small-5 text-center">
+                    <h3>Age:
+                        <span id="age">
+                            <%- age %>
+                        </span> |
+                        <span id="gender">
+                            <%- gender %>
+                        </span> |
+                        <span id="location">
+                            <%- location %>
+                        </span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="cell small-1"></div>
+
+
+        <% include ../partials/footer %>
+
+    </div>
 
 
 
 
-        <% include ../partials/google-scripts.ejs %>
-            <% include ../partials/scripts.ejs %>
-    </body>
+
+    <% include ../partials/google-scripts.ejs %>
+        <% include ../partials/scripts.ejs %>
+</body>
 
 </html>

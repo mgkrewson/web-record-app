@@ -51,8 +51,11 @@ function postRandom(req, res) {
     console.log("got POST random request");
     getRandomID()
         .then((id) => {
-            console.log(id[0]);
-            res.end(id[0]);
+            let idNum = Number.parseInt(id[0]);
+            let sendID = addZeros(idNum);
+            console.log(sendID);
+            // res.write(id.join(''));
+            res.end(sendID);
         });
 }
 

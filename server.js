@@ -67,11 +67,6 @@ app.post('/record_post', fileFields, function (req, res, next) {
     handlers.recordPost(req, res, next);
 });
 
-// app.post('/play_post', urlencodedParser, function (req, res, next) {
-//     handlers.playPost(req, res, next);
-// });
-
-
 
 
 // export GOOGLE_APPLICATION_CREDENTIALS="/Users/michaelkrewson/Dropbox/Coding_projects/web_record/web-record-5f7ce-firebase-adminsdk-48kz4-39edebe7c0.json"

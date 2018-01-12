@@ -100,16 +100,21 @@ p {
 ************************************/
 
 .full-bg-image {
-  // background-repeat: no-repeat;
-  // background-position: center center;
-  // background-origin: border-box;
-  // background-size: cover;
-  // background-attachment: fixed;
   color: white !important;
   text-shadow: 1px 2px 0px rgba(0, 0, 0, 1);
   & .fa-share-alt {
     color: white;
-  }
+  };
+}
+
+#starting-mask {
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  position: absolute;
+  z-index: 500;
+  // transition: background-color 0.6s;
+  // transition: z-index 0s linear 0.6s;
 }
 
 #audio-title {
