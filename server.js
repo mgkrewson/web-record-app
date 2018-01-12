@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const handlers = require('./route_handlers.js');
 
 const hostname = '127.0.0.1';
-const listenPort = 3000;
+const listenPort = process.env.PORT || 3000;
 const server = app.listen(listenPort, hostname, function () {
     let host = server.address().address;
     let port = server.address().port;
