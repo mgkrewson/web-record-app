@@ -8,32 +8,29 @@
 <body>
 
 
-    <div class="grid-y" id="page-y-grid">
+    <div class="grid-y grid-padding-y" id="page-y-grid">
         <% include ../partials/header %>
 
-            <div class="cell small-3">
+            <div class="cell small-3 medium-2">
                 <div class="grid-x grid-margin-x align-center align-middle full-height">
                     <div class="grid-x align-center grid-padding-x" id="about">
-                        <div class="cell medium-shrink small-12 text-center">
+                        <div class="cell medium-shrink small-10 medium-text-right">
                             <h2>About:</h2>
                         </div>
-                        <div class="cell medium-6 small-10">
-                            <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                                dolore eu fugiat nulla pariatur.</p>
+                        <div class="cell small-10 medium-6 large-4">
+                            <p>A demo app built on Node. Design is based off a real-world client project spec. Upload a photo
+                                and record a short memo about it. Please no rickrolling.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="cell auto">
+            <div class="cell small-6 medium-auto">
                 <!-- LEFT PANE -->
                 <div class="grid-x grid-padding-x align-center full-height">
 
-                    <div class="cell small-12 medium-4" id="left-pane">
-                        <div class="grid-y align-spaced" style="height: 100%;">
+                    <div class="cell small-12 medium-6 large-4" id="left-pane">
+                        <div class="grid-y home-pane" style="height: 100%;">
                             <div class="cell small-5">
                                 <div class="grid-x align-center-middle">
                                     <a href="/record">
@@ -52,8 +49,8 @@
                     </div>
 
                     <!-- RIGHT PANE -->
-                    <div class="cell small-12 medium-4" id="right-pane">
-                        <div class="grid-y align-spaced" style="height: 100%;">
+                    <div class="cell small-12 medium-6 large-4" id="right-pane">
+                        <div class="grid-y home-pane" style="height: 100%;">
                             <div class="cell small-5">
                                 <div class="grid-x align-center-middle">
                                     <a href="/play">

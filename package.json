@@ -1,7 +1,7 @@
 {
-  "name": "foundation-sites-template",
+  "name": "tell-me-more",
   "version": "1.0.0",
-  "description": "Basic template for a new Foundation for Sites project.",
+  "description": "Demo app for recording short snippets and sharing.",
   "main": "gulpfile.js",
   "devDependencies": {
     "gulp": "^3.9.0",
