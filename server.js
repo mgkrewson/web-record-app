@@ -13,7 +13,7 @@ const listenPort = process.env.PORT || 3000;
 const server = app.listen(listenPort, function () {
     // let host = server.address().address;
     let port = server.address().port;
-    console.log('Server running at http://%s:%s/', port);
+    console.log('Server running at http://%s:%s/', hostname, port);
 });
 
 
